@@ -5,12 +5,10 @@ This guide describes the necessary steps to deploy Wazuh on Kubernetes.
 ## Pre-requisites
 
 - Kubernetes cluster already deployed.
-- Kubernetes can run on a wide range of Cloud providers and bare-metal environments, this repository focuses on [AWS](https://aws.amazon.com/). It was tested using [Amazon EKS](https://docs.aws.amazon.com/eks). You should be able to:
-    - Create Persistent Volumes on top of AWS EBS when using a volumeClaimTemplates
-    - Create a record set in AWS Route 53 from a Kubernetes LoadBalancer.
+- Kubernetes can run on a wide range of Cloud providers and bare-metal environments, this repository focuses on [Google GKE](https://cloud.google.com/kubernetes-engine/). 
+    
 - Having at least two Kubernetes nodes in order to meet the *podAntiAffinity* policy.
-- For Kubernetes version 1.23 or higher, the assignment of an IAM Role is necessary for the CSI driver to function correctly. Within the AWS documentation you can find the instructions for the assignment: https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html
-- The installation of the CSI driver is necessary for new and old deployments, since it is a Kubernetes feature.
+- Use Kubernetes version 1.23 or higher
 
 
 ## Overview
