@@ -88,7 +88,7 @@ Details:
 
 Deploying the Kubernetes cluster is out of the scope of this guide.
 
-This repository focuses on [AWS](https://aws.amazon.com/) but it should be easy to adapt it to another Cloud provider. In case you are using AWS, we recommend [EKS](https://docs.aws.amazon.com/en_us/eks/latest/userguide/getting-started.html).
+This repository focuses on [GKE](https://cloud.google.com/kubernetes-engine/) but it should be easy to adapt it to another Cloud provider. 
 
 
 ### Step 2: Create domains to access the services
@@ -106,13 +106,13 @@ Note: You can skip this step and the services will be accessible using the Load 
 Clone this repository to deploy the necessary services and pods.
 
 ```BASH
-$ git clone https://github.com/wazuh/wazuh-kubernetes.git
-$ cd wazuh-kubernetes
+$ git clone https://github.com/aaron-dm-mcdonald/wazuh-k8s-gke.git
+$ cd wazuh-k8s-gke
 ```
 
 ### Step 3.1: Setup SSL certificates
 
-You can generate self-signed certificates for the Wazuh indexer cluster using the script at `wazuh/certs/indexer_cluster/generate_certs.sh` or provide your own.
+You can generate self-signed certificates for the Wazuh indexer cluster using the script at `wazuh/certs/indexer_cluster/generate_certs_<OS_here>.sh` or provide your own.
 
 Since Wazuh dashboard has HTTPS enabled it will require its own certificates, these may be generated with: `openssl req -x509 -batch -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem`, there is an utility script at `wazuh/certs/dashboard_http/generate_certs.sh` to help with this.
 
@@ -137,15 +137,15 @@ The required certificates are imported via secretGenerator on the `kustomization
 
 ### Step 3.2: Apply all manifests using kustomize
 
-We are using the overlay feature of kustomize to create two variants: `eks` and `local-env`, in this guide we're using `eks`. (For a deployment on a local environment check the guide on [local-environment.md](local-environment.md))
+We are using the overlay feature of kustomize. 
 
-You can adjust resources for the cluster on `envs/eks/`, you can tune cpu, memory as well as storage for persistent volumes of each of the cluster objects.
+You can adjust resources for the cluster on `envs/gke/`, you can tune cpu, memory as well as storage for persistent volumes of each of the cluster objects.
 
 
-By using the kustomization file on the `eks` variant we can now deploy the whole cluster with a single command:
+By using the kustomization file on the `gke` variant we can now deploy the whole cluster with a single command:
 
 ```BASH
-$ kubectl apply -k envs/eks/
+$ kubectl apply -k envs/gke/
 ```
 
 ### Verifying the deployment
@@ -206,10 +206,10 @@ wazuh-manager-worker-1             1/1     Running   0          4h17m
 
 In case you created domain names for the services, you should be able to access Wazuh dashboard using the proposed domain name: https://wazuh.your-domain.com.
 
-Also, you can access using the External-IP (from the VPC): https://internal-xxx-yyy.us-east-1.elb.amazonaws.com:443
+Also, you can access using the External-IP (from the VPC): https://<service/dashboard.external-ip>:443
 
 ```BASH
 $ kubectl get services -o wide -n wazuh
 NAME        TYPE           CLUSTER-IP       EXTERNAL-IP                                                              PORT(S)        AGE     SELECTOR
-dashboard   LoadBalancer   10.100.55.244    a91dadfdf2d33493dad0a267eb85b352-1129724810.us-west-1.elb.amazonaws.com  443:31670/TCP  4h19m   app=wazuh-dashboard
+dashboard   LoadBalancer   10.100.55.244    <service/dashboard.external-ip>  443:31670/TCP  4h19m   app=wazuh-dashboard
 ```
